@@ -1,77 +1,73 @@
-"use client";
+import { BookOpenIcon, InfoIcon, LifeBuoyIcon } from "lucide-react"
 
-import { PaletteIcon, CodeIcon, InfoIcon } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import Logo from "@/components/navbar-components/logo"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+} from "@/components/ui/navigation-menu"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/popover"
 
-// Navigation links array pour les menus desktop et mobile
+// Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
-  { href: "/", label: "Accueil" },
+  { href: "#", label: "Home" },
   {
-    label: "Outils",
+    label: "Features",
     submenu: true,
     type: "description",
     items: [
       {
-        href: "/converter",
-        label: "Convertisseur de couleurs",
-        description:
-          "Convertissez instantanément entre HEX, RGB, HSL et autres formats.",
+        href: "#",
+        label: "Components",
+        description: "Browse all components in the library.",
       },
       {
-        href: "/color-picker",
-        label: "Sélecteur de couleur",
-        description: "Sélectionnez et ajustez des couleurs avec précision.",
+        href: "#",
+        label: "Documentation",
+        description: "Learn how to use the library.",
       },
       {
-        href: "/patterns",
-        label: "Créateur de motifs",
-        description: "Créez des patterns personnalisés pour vos designs web.",
+        href: "#",
+        label: "Templates",
+        description: "Pre-built layouts for common use cases.",
       },
     ],
   },
   {
-    label: "Ressources",
+    label: "Pricing",
     submenu: true,
     type: "simple",
     items: [
-      { href: "/palettes", label: "Palettes prédéfinies" },
-      { href: "/tailwind", label: "Couleurs Tailwind" },
-      { href: "/harmony", label: "Harmonies de couleurs" },
-      { href: "/gradients", label: "Générateur de dégradés" },
+      { href: "#", label: "Product A" },
+      { href: "#", label: "Product B" },
+      { href: "#", label: "Product C" },
+      { href: "#", label: "Product D" },
     ],
   },
   {
-    label: "À propos",
+    label: "About",
     submenu: true,
     type: "icon",
     items: [
-      { href: "/docs", label: "Documentation", icon: "CodeIcon" },
-      { href: "/support", label: "Support", icon: "LifeBuoyIcon" },
-      { href: "/about", label: "Notre mission", icon: "InfoIcon" },
+      { href: "#", label: "Getting Started", icon: "BookOpenIcon" },
+      { href: "#", label: "Tutorials", icon: "LifeBuoyIcon" },
+      { href: "#", label: "About Us", icon: "InfoIcon" },
     ],
   },
-];
+]
 
-export default function MainNav() {
-  const pathname = usePathname();
-
+export default function Component() {
   return (
-      <>
+    <header className="border-b px-4 md:px-6">
       <div className="flex h-16 items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex items-center gap-2">
@@ -123,32 +119,21 @@ export default function MainNav() {
                           <ul>
                             {link.items.map((item, itemIndex) => (
                               <li key={itemIndex}>
-                                <Link
+                                <NavigationMenuLink
                                   href={item.href}
-                                  className={cn(
-                                    "block px-2 py-1.5 text-xs",
-                                    pathname === item.href
-                                      ? "text-primary font-medium"
-                                      : "text-muted-foreground"
-                                  )}
+                                  className="py-1.5"
                                 >
                                   {item.label}
-                                </Link>
+                                </NavigationMenuLink>
                               </li>
                             ))}
                           </ul>
                         </>
-                      ) : link.href ? (
-                        <Link
-                          href={link.href}
-                          className={cn(
-                            "text-muted-foreground hover:text-primary px-2 py-1.5 font-medium text-sm",
-                            pathname === link.href && "text-primary"
-                          )}
-                        >
+                      ) : (
+                        <NavigationMenuLink href={link.href} className="py-1.5">
                           {link.label}
-                        </Link>
-                      ) : null}
+                        </NavigationMenuLink>
+                      )}
                       {/* Add separator between different types of items */}
                       {index < navigationLinks.length - 1 &&
                         // Show separator if:
@@ -175,6 +160,9 @@ export default function MainNav() {
           </Popover>
           {/* Main nav */}
           <div className="flex items-center gap-6">
+            <a href="#" className="text-primary hover:text-primary/90">
+              <Logo />
+            </a>
             {/* Navigation menu */}
             <NavigationMenu viewport={false} className="max-md:hidden">
               <NavigationMenuList className="gap-2">
@@ -195,25 +183,22 @@ export default function MainNav() {
                           >
                             {link.items.map((item, itemIndex) => (
                               <li key={itemIndex}>
-                                <Link
+                                <NavigationMenuLink
                                   href={item.href}
-                                  className={cn(
-                                    "block px-4 py-2 hover:bg-accent/50 rounded-md text-sm",
-                                    pathname === item.href ? "bg-accent" : ""
-                                  )}
+                                  className="py-1.5"
                                 >
                                   {/* Display icon if present */}
                                   {link.type === "icon" && "icon" in item && (
-                                    <div className="flex items-center gap-2 text-sm">
-                                      {item.icon === "CodeIcon" && (
-                                        <CodeIcon
+                                    <div className="flex items-center gap-2">
+                                      {item.icon === "BookOpenIcon" && (
+                                        <BookOpenIcon
                                           size={16}
                                           className="text-foreground opacity-60"
                                           aria-hidden="true"
                                         />
                                       )}
                                       {item.icon === "LifeBuoyIcon" && (
-                                        <PaletteIcon
+                                        <LifeBuoyIcon
                                           size={16}
                                           className="text-foreground opacity-60"
                                           aria-hidden="true"
@@ -234,7 +219,7 @@ export default function MainNav() {
                                   {link.type === "description" &&
                                   "description" in item ? (
                                     <div className="space-y-1">
-                                      <div className="font-medium text-sm">
+                                      <div className="font-medium">
                                         {item.label}
                                       </div>
                                       <p className="text-muted-foreground line-clamp-2 text-xs">
@@ -249,30 +234,36 @@ export default function MainNav() {
                                         <span>{item.label}</span>
                                       ))
                                   )}
-                                </Link>
+                                </NavigationMenuLink>
                               </li>
                             ))}
                           </ul>
                         </NavigationMenuContent>
                       </>
-                    ) : link.href ? (
-                      <Link
+                    ) : (
+                      <NavigationMenuLink
                         href={link.href}
-                        className={cn(
-                          "text-muted-foreground hover:text-primary px-2 py-1.5 font-medium text-sm",
-                          pathname === link.href && "text-primary"
-                        )}
+                        className="text-muted-foreground hover:text-primary py-1.5 font-medium"
                       >
                         {link.label}
-                      </Link>
-                    ) : null}
+                      </NavigationMenuLink>
+                    )}
                   </NavigationMenuItem>
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
           </div>
         </div>
+        {/* Right side */}
+        <div className="flex items-center gap-2">
+          <Button asChild variant="ghost" size="sm" className="text-sm">
+            <a href="#">Sign In</a>
+          </Button>
+          <Button asChild size="sm" className="text-sm">
+            <a href="#">Get Started</a>
+          </Button>
+        </div>
       </div>
-      </>
-  );
-};
+    </header>
+  )
+}
