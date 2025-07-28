@@ -12,9 +12,19 @@ import { CopyIcon, CheckIcon, RefreshCwIcon, PaletteIcon } from "lucide-react"
 export default function HarmonyPage() {
   const [baseColor, setBaseColor] = useState("#3b82f6")
   const [harmonyType, setHarmonyType] = useState("complementary")
-  const [saturation, setSaturation] = useState([70])
-  const [lightness, setLightness] = useState([50])
+  const [saturationValue, setSaturationValue] = useState(70)
+  const [lightnessValue, setLightnessValue] = useState(50)
   const [copied, setCopied] = useState<string | null>(null)
+
+  // Fonction stable pour gérer les changements de saturation
+  const handleSaturationChange = useCallback((value: number[]) => {
+    setSaturationValue(value[0])
+  }, [])
+
+  // Fonction stable pour gérer les changements de luminosité
+  const handleLightnessChange = useCallback((value: number[]) => {
+    setLightnessValue(value[0])
+  }, [])
 
   // Types d'harmonies disponibles
   const harmonyTypes = {
@@ -57,7 +67,7 @@ export default function HarmonyPage() {
   }
 
   // Fonction pour convertir HEX en HSL
-  const hexToHsl = (hex: string) => {
+  const hexToHsl = useCallback((hex: string) => {
     const r = parseInt(hex.slice(1, 3), 16) / 255
     const g = parseInt(hex.slice(3, 5), 16) / 255
     const b = parseInt(hex.slice(5, 7), 16) / 255
@@ -84,10 +94,10 @@ export default function HarmonyPage() {
       s: Math.round(s * 100),
       l: Math.round(l * 100)
     }
-  }
+  }, [])
 
   // Fonction pour convertir HSL en HEX
-  const hslToHex = (h: number, s: number, l: number) => {
+  const hslToHex = useCallback((h: number, s: number, l: number) => {
     h /= 360
     s /= 100
     l /= 100
@@ -119,7 +129,7 @@ export default function HarmonyPage() {
     }
 
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`
-  }
+  }, [])
 
   // Générer les couleurs d'harmonie
   const generateHarmony = useCallback(() => {
@@ -129,11 +139,11 @@ export default function HarmonyPage() {
     if (harmonyType === "monochromatic") {
       // Pour monochromatique, on varie la luminosité et légèrement la saturation
       return [
-        hslToHex(baseHsl.h, saturation[0] * 0.3, lightness[0] * 0.4),
-        hslToHex(baseHsl.h, saturation[0] * 0.7, lightness[0] * 0.7),
+        hslToHex(baseHsl.h, saturationValue * 0.3, lightnessValue * 0.4),
+        hslToHex(baseHsl.h, saturationValue * 0.7, lightnessValue * 0.7),
         baseColor,
-        hslToHex(baseHsl.h, saturation[0] * 1.2, lightness[0] * 1.3),
-        hslToHex(baseHsl.h, saturation[0] * 0.9, lightness[0] * 1.6)
+        hslToHex(baseHsl.h, saturationValue * 1.2, lightnessValue * 1.3),
+        hslToHex(baseHsl.h, saturationValue * 0.9, lightnessValue * 1.6)
       ].slice(0, harmony.angles.length || 5)
     }
 
@@ -141,18 +151,18 @@ export default function HarmonyPage() {
       if (index === 0) return baseColor
 
       const newHue = (baseHsl.h + angle) % 360
-      const newSaturation = Math.min(100, saturation[0] + (Math.random() - 0.5) * 20)
-      const newLightness = Math.min(100, lightness[0] + (Math.random() - 0.5) * 20)
+      const newSaturation = Math.min(100, saturationValue + (Math.random() - 0.5) * 20)
+      const newLightness = Math.min(100, lightnessValue + (Math.random() - 0.5) * 20)
 
       return hslToHex(newHue, newSaturation, newLightness)
     })
-  }, [baseColor, harmonyType, saturation, lightness, harmonyTypes, hexToHsl, hslToHex])
+  }, [baseColor, harmonyType, saturationValue, lightnessValue, hexToHsl, hslToHex])
 
   const [harmonyColors, setHarmonyColors] = useState<string[]>([])
 
   useEffect(() => {
     setHarmonyColors(generateHarmony())
-  }, [baseColor, harmonyType, saturation, lightness, generateHarmony])
+  }, [baseColor, harmonyType, saturationValue, lightnessValue, generateHarmony])
 
   // Fonction pour copier dans le presse-papiers
   const copyToClipboard = (text: string, type: string) => {
@@ -270,10 +280,10 @@ export default function HarmonyPage() {
 
                 {/* Saturation */}
                 <div className="space-y-3">
-                  <Label>Saturation ({saturation[0]}%)</Label>
+                  <Label>Saturation ({saturationValue}%)</Label>
                   <Slider
-                    value={saturation}
-                    onValueChange={setSaturation}
+                    value={[saturationValue]}
+                    onValueChange={handleSaturationChange}
                     max={100}
                     min={0}
                     step={1}
@@ -283,10 +293,10 @@ export default function HarmonyPage() {
 
                 {/* Luminosité */}
                 <div className="space-y-3">
-                  <Label>Luminosité ({lightness[0]}%)</Label>
+                  <Label>Luminosité ({lightnessValue}%)</Label>
                   <Slider
-                    value={lightness}
-                    onValueChange={setLightness}
+                    value={[lightnessValue]}
+                    onValueChange={handleLightnessChange}
                     max={100}
                     min={10}
                     step={1}
